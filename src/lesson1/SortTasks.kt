@@ -2,6 +2,8 @@
 
 package lesson1
 
+import java.io.File
+
 /**
  * Сортировка времён
  *
@@ -63,7 +65,25 @@ fun sortTimes(inputName: String, outputName: String) {
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun sortAddresses(inputName: String, outputName: String) {
-    TODO()
+    var result = mutableMapOf<String, MutableList<String>>()
+    for (record in File(inputName).readLines()) {
+        if (!record.matches(Regex("""([A-zА-яёЁ]+) ([A-zА-яёЁ]+) - ([A-zА-я-ёЁ]+) \d+""")))
+            throw Exception("Exception wrong data")
+        val fio = record.split(" - ")[0]
+        val address = record.split(" - ")[1]
+        result[address]?.add(fio) ?: result.put(address, mutableListOf(fio))
+    }
+    result = result
+        .toSortedMap(compareBy({ it.split(" ").first() }, { it.split(" ").last().toInt() }))
+    result.map { it.value.sort() }
+    File(outputName).bufferedWriter().use {
+        for ((address, fio) in result) {
+            it.write("$address - ${fio.joinToString(", ")}")
+            it.newLine()
+        }
+    }
+    // T(N) = O(N)
+    // R(N) = O(N*logN)
 }
 
 /**
@@ -97,7 +117,15 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 121.3
  */
 fun sortTemperatures(inputName: String, outputName: String) {
-    TODO()
+    val min = 273 * 10
+    val max = min + 500 * 10
+    val list = mutableListOf<Int>()
+    File(inputName).forEachLine { list.add(it.replace(".", "").toInt() + min) }
+    File(outputName).writeText(
+        countingSort(list.toIntArray(), max).map { (it - min).toFloat() / 10 }.joinToString("\n")
+    )
+    // T(N) = O(N)
+    // R(N) = O(N)
 }
 
 /**
