@@ -141,6 +141,6 @@ fun calcPrimesNumber(limit: Int): Int {
         if (fl) result++
     }
     return result
-    // T(N) = O(1)
-    // R(N) = O((N/2)*sqrt(N))
+    // T(N) = O(N*log(log(n))
+    // R(N) = O(N)
 }

@@ -83,7 +83,7 @@ fun sortAddresses(inputName: String, outputName: String) {
         }
     }
     // T(N) = O(N)
-    // R(N) = O(N*logN)
+    // R(N) = O(N)
 }
 
 /**
