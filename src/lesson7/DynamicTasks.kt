@@ -2,6 +2,8 @@
 
 package lesson7
 
+import kotlin.math.max
+
 /**
  * Наибольшая общая подпоследовательность.
  * Средняя
@@ -14,8 +16,28 @@ package lesson7
  * Если есть несколько самых длинных общих подпоследовательностей, вернуть любую из них.
  * При сравнении подстрок, регистр символов *имеет* значение.
  */
+// Т = O(N*M)
+// R = O(N*M)
 fun longestCommonSubSequence(first: String, second: String): String {
-    TODO()
+    val mas = Array(first.length + 1) { Array(second.length + 1) { 0 } }
+    for (i in first.length - 1 downTo 0)
+        for (j in second.length - 1 downTo 0)
+            mas[i][j] = if (first[i] == second[j]) mas[i + 1][j + 1] + 1 else max(mas[i + 1][j], mas[i][j + 1])
+    val result = StringBuilder()
+    var i = 0
+    var j = 0
+    while (i < first.length && j < second.length && mas[i][j] != 0) {
+        when {
+            first[i] == second[j] -> {
+                result.append(first[i])
+                i++
+                j++
+            }
+            mas[i][j] == mas[i + 1][j] -> i++
+            else -> j++
+        }
+    }
+    return result.toString()
 }
 
 /**
@@ -30,8 +52,35 @@ fun longestCommonSubSequence(first: String, second: String): String {
  * то вернуть ту, в которой числа расположены раньше (приоритет имеют первые числа).
  * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
  */
+
+// Т = O(N*N)
+// R = O(N)
 fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
-    TODO()
+    val result = ArrayList<Int>()
+    if (list.isEmpty()) return result
+    val prev = IntArray(list.size)
+    val d = IntArray(list.size)
+    for (i in list.indices) {
+        d[i] = 1
+        prev[i] = -1
+        for (j in 0..i)
+            if (list[j] < list[i] && d[j] + 1 > d[i]) {
+                d[i] = d[j] + 1
+                prev[i] = j
+            }
+    }
+    var pos = 0
+    var len = d[0]
+    for (i in list.indices)
+        if (d[i] > len) {
+            pos = i
+            len = d[i]
+        }
+    while (pos != -1) {
+        result.add(0, list[pos])
+        pos = prev[pos]
+    }
+    return result
 }
 
 /**

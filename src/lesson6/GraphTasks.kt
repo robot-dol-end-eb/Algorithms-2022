@@ -2,6 +2,9 @@
 
 package lesson6
 
+import java.util.*
+import kotlin.collections.HashSet
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -88,8 +91,22 @@ fun Graph.minimumSpanningTree(): Graph {
  *
  * Если на входе граф с циклами, бросить IllegalArgumentException
  */
+// Т = O(N*N)
+// R = O(N)
 fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
-    TODO()
+    val result = mutableSetOf<Set<Graph.Vertex>>()
+    val suitable = mutableSetOf<Graph.Vertex>()
+    val pass = mutableSetOf<Graph.Vertex>()
+    for (i in vertices) {
+        for (j in vertices) {
+            if (!this.getNeighbors(i).contains(j) && !pass.contains(j)) {
+                pass.addAll(this.getNeighbors(j))
+                suitable.add(j)
+            }
+        }
+        result.add(suitable)
+    }
+    return result.maxByOrNull { it.size } ?: setOf()
 }
 
 /**
@@ -112,8 +129,25 @@ fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
  *
  * Ответ: A, E, J, K, D, C, H, G, B, F, I
  */
+// Т = O(N*N)
+// R = O(N*N)
 fun Graph.longestSimplePath(): Path {
-    TODO()
+    val path = Stack<Path>()
+    var result = Path()
+    var max = -1
+    for (elem in this.vertices)
+        path.push(Path(elem))
+    while (!path.isEmpty()) {
+        val subPath = path.pop()
+        for (elem in this.getNeighbors(subPath.vertices[subPath.length]))
+            if (!subPath.contains(elem))
+                path.push(Path(subPath, this, elem))
+        if (subPath.length > max) {
+            result = subPath
+            max = subPath.length
+        }
+    }
+    return result
 }
 
 /**
